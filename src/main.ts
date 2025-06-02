@@ -101,6 +101,8 @@ class animal{
 let animals : animal[] = []
 
 function step(p = 0.2){
+  navigator?.vibrate(100);
+
   if (animals.length == 0){
     animals = [new animal()]
     animalelement.appendChild(animals[0].element)
@@ -123,6 +125,7 @@ function step(p = 0.2){
 
 
 stopbutton.addEventListener("click", () => {
+  navigator?.vibrate(200);
   let score = animals.reduce((acc, a) => acc + a.worth(), 0);
   if (score > highscore){
 
