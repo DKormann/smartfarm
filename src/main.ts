@@ -140,14 +140,11 @@ function startGame(){
   animalsElement.appendChild(fst.element);
   animals.set([fst]);
   button2.style.display = "inline-block";
-
 }
 
-document.addEventListener("click", (e) => {
-  // if (e.target == sellbutton || e.target == button2) return;
-  startGame();
-})
+startGame();
 
+document.addEventListener("click", (e) => startGame())
 
 button1.onclick = ()=>updateAnimals(true);
 button2.onclick = ()=>updateAnimals(false);
@@ -168,9 +165,6 @@ sellbutton.className = "bigbutton";
 sellbutton.textContent = "Sell";
 sellbutton.style.backgroundColor = "grey";
 
-const starttag = createHtmlElement("p", true);
-starttag.textContent = "Click to start the game";
-
 sellbutton.onclick = () => {
   const value = animals.get().reduce((sum, animal) => sum + animal.worth(),0);
   balance.update(b => b + value);
@@ -181,16 +175,7 @@ sellbutton.onclick = () => {
 
 animals.subscribe(currentAnimals => {
   if (currentAnimals.length > 0) {
-    starttag.style.display = "none";
-    sellbutton.style.display = "inline-block";
-    button1.style.display = "inline-block";
-    button2.style.display = "inline-block";
     const value = currentAnimals.reduce((sum, animal) => sum + animal.worth(),0);
     sellbutton.textContent = `Sell for ${value}$`;
-  } else {
-    sellbutton.style.display = "none";
-    button1.style.display = "none";
-    button2.style.display = "none";
-    starttag.style.display = "block";
   }
 })
