@@ -64,7 +64,6 @@ h1{
   min-height: 1em;
 }
 
-
 .animal{
   transition: 0.2s;
   font-size: 0em;
@@ -76,10 +75,7 @@ h1{
 }
 
 .dead{
-  /* transition: 1s; */
-
+  transition: .4s;
   font-size: 0;
-  /* display: none; */
-
 }
 
