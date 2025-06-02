@@ -35,11 +35,21 @@ h1{
   margin: 1em;
   margin-top: 2em;
   user-select: none;
+  transition: 0.1s;
+}
 
+#feedbutton:active, #feedbutton2:active{
+  background-color: rgb(255, 100, 0);
+  transform: scale(0.95);
 }
 
 #feedbutton2{
   background-color: green;
+}
+
+#feedbutton2:active{
+  background-color: rgb(0, 200, 0);
+  transform: scale(0.95);
 }
 
 #animals{
