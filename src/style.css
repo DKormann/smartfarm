@@ -24,7 +24,7 @@ h1{
   margin: 0.5em 0;
 }
 
-#feedbutton, #feedbutton2{
+.bigbutton{
   background-color: rgb(187, 65, 0);
   font-size: 1.2em;
   border-radius: 1em;
@@ -38,16 +38,16 @@ h1{
   transition: 0.1s;
 }
 
-#feedbutton:active, #feedbutton2:active{
+.bigbutton:active{
   background-color: rgb(255, 100, 0);
   transform: scale(0.95);
 }
 
-#feedbutton2{
+#button2{
   background-color: green;
 }
 
-#feedbutton2:active{
+#button2:active{
   background-color: rgb(0, 200, 0);
   transform: scale(0.95);
 }
@@ -58,15 +58,15 @@ h1{
   font-size: 4em;
   display: flex;
   flex-direction: row;
-  min-width: none;
   justify-content: center;
   width: 70vw;
-  min-height: 1em;
+  height: 2em;
 }
 
 .animal{
   transition: 0.2s;
   font-size: 0em;
+  display: inline;
 }
 
 .animal.active{
@@ -74,8 +74,8 @@ h1{
   font-size: 1.2em;
 }
 
-.dead{
-  transition: .4s;
+.animal.dead{
+  transition: .5s;
   font-size: 0;
 }
 

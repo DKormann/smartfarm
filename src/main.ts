@@ -1,150 +1,188 @@
 
 export {}
+const skins = ["🐭","🐹","🐱","🐶","🐻","🐯","🦁","🐼","🐸","🐲",]
 
-const body = document.body
 
-body.innerHTML = "<h1>smartfarm</h1>"
+class Writable<T> {
+  private value: T;
+  subscribers = new Set<(value: T) => void>();
 
-let highscore = 0;
+  constructor(value: T) {
+    this.value = value;
+  }
 
-function createElement(tag: string, text: string): HTMLElement {
+  subscribe(callback: (value: T) => void): void {
+    this.subscribers.add(callback);
+    callback(this.value);
+  }
+
+  get(): T {
+    return this.value;
+  }
+  
+  set(value: T): void {
+    this.value = value;
+    this.subscribers.forEach(callback => callback(value));
+  }
+
+  update(updater: (value: T) => T): void {
+    this.set(updater(this.value));
+  }
+
+}
+const body = document.body;
+
+
+function createHtmlElement<T extends keyof HTMLElementTagNameMap>(tag: T, append = false): HTMLElementTagNameMap[T] {
   const element = document.createElement(tag);
-  element.textContent = text;
+  if (append) body.appendChild(element);
   return element;
 }
 
-let highscoreelement = createElement("span", "highscore: 0")
-body.appendChild(highscoreelement)
-let deposit = 100;
-
-const scoredisplay = createElement("div", "bank: " + deposit)
-body.appendChild(scoredisplay)
+const h = createHtmlElement("h1", true);
+h.textContent = "Smart Farm";
 
 
-body.appendChild(createElement("p", "Feed your animals:"))
+const balance = new Writable(100);
 
-const feedtext = "Futtr🍖"
-const feedtext2 = "Futta🥦"
-
-const feedbutton = createElement("button", feedtext)
-const feedbutton2 = createElement("button", feedtext2)
-
-feedbutton.id = "feedbutton"
-feedbutton2.id = "feedbutton2"
-
-const animalelement = createElement("div", "")
-animalelement.id = "animals"
-body.appendChild(animalelement)
-body.appendChild(feedbutton)
-body.appendChild(feedbutton2)
-
-const highscoredisplay = createElement("div", "")
-body.appendChild(highscoredisplay)
-
-const stopbutton = createElement("button", "verkaufen")
-stopbutton.id = "feedbutton"
-stopbutton.style.background = "grey"
-body.appendChild(stopbutton)
+const balanceElement = createHtmlElement("p", true);
+balance.subscribe(value => {
+  balanceElement.textContent = `bank: ${value}$`;
+});
 
 
+const animals = new Writable<Animal[]>([]);
+
+const animalsElement = createHtmlElement("div", true);
+animalsElement.id= "animals";
 
 
-const animaltypes = ["🐭","🐹","🐱","🐶","🐻","🐯","🦁","🐼","🐸","🐲",]
+const highscore = new Writable(0);
+const highscoreElement = createHtmlElement("p", true);
+highscore.subscribe(value => {
+  
+  highscoreElement.textContent = `highscore: ${animals.get().reduce((sum, animal) => sum + animal.face(), "")}`;
+});
 
-class animal{
 
-  type : number
-  element: HTMLElement
-  alive: boolean = true
+class Animal{
+  type: number;
+  element: HTMLElement;
+  alive = true;
 
-  constructor(t = 0){
-    this.type = t
-    this.element = createElement("div", animaltypes[t])
-    this.element.className = "animal"
-    setTimeout(() => {
-      this.element.className = "animal active"
-    }, 1);
+  constructor(type:number){
+    this.type = type;
+    this.element = createHtmlElement("div", true);
+    this.element.textContent = this.face();
+    this.element.className = "animal";
+    setTimeout(() => this.element.classList.add("active"), 1);
   }
 
   remove(){
-    this.element.className = "dead"
-    setTimeout(()=>this.element.remove(), 1000)
-    this.alive = false
-
+    this.alive = false;
+    this.element.classList.add("dead");
+    setTimeout(() => {
+      this.element.remove();
+    },1000);
   }
 
-  worth() {
-    return 2 ** this.type
+  face(): string{
+    return skins[this.type];
   }
 
+  worth(): number {
+    if (!this.alive) return 0;
+    return Math.pow(2, this.type);
+  }
 
-  evolve(p:number): void {
-    let rand = Math.random()
-    console.log(rand)
-    
-    if (rand < p) return this.remove()
+  update(p:number): Animal[] {
+    const random = Math.random();
 
-    if (rand > 1 - p){ 
-      if ((Math.random() > 0.5) && (this.type + 1 < animaltypes.length)) {
-        this.type = Math.min(animals.length-1, this.type + 1)
-        this.element.textContent = animaltypes[this.type]
-        return
-      }
-      let n = new animal(this.type)
-      this.element.insertAdjacentElement("afterend", n.element)
-      animals.push(n)
+    if (random < p){
+      this.remove();
+      return [];
     }
+
+    if (random < p*2){
+      if (Math.random() < 0.5 && this.type + 1 < skins.length) {
+        this.type += 1;
+        this.element.textContent = this.face();
+      }else{
+        const newone = new Animal(this.type);
+        this.element.insertAdjacentElement("afterend", newone.element);
+        return [this,newone];
+      }
+    }
+    return [this];
+
   }
-  
-}
-
-let animals : animal[] = []
-
-function step(p = 0.2){
-  navigator?.vibrate(100);
-
-  if (animals.length == 0){
-    animals = [new animal()]
-    animalelement.appendChild(animals[0].element)
-    feedbutton.textContent = feedtext;
-    feedbutton2.style.display = "inline"
-    return
-  }
-  
-  animals.forEach(a =>a.evolve(p))
-  animals = animals.filter(a => a.alive)
-
-  if (animals.length==0){
-    feedbutton.textContent= "neustart"
-    feedbutton2.style.display = "none"
-    deposit -= 1;
-    scoredisplay.textContent = "bank: " + deposit;
-  }
-    
 }
 
 
-stopbutton.addEventListener("click", () => {
-  navigator?.vibrate(200);
-  let score = animals.reduce((acc, a) => acc + a.worth(), 0);
-  if (score > highscore){
+const button1 = createHtmlElement("button", true);
+button1.className = "bigbutton";
+button1.textContent = "Start Game";
 
-    highscore = Math.max(highscore, score);
-    highscoreelement.textContent = "highscore: " + animals.reduce((acc, a) => acc + animaltypes[a.type], "");
-    alert("new highscore: " + highscore);
+const button2 = createHtmlElement("button", true);
+button2.className = "bigbutton";
+button2.id = "button2";
+button2.textContent = "Feed 🥦";
+button2.style.display = "none";
 
+
+function startGame(){
+  balance.set(balance.get() - 1);
+  const fst = new Animal(0);
+  animalsElement.appendChild(fst.element);
+  animals.set([fst]);
+  button1.textContent = "Futtr 🍖";
+  button2.style.display = "inline-block";
+  action1.set(updateAnimals);
+
+}
+
+const action1 = new Writable(startGame);
+button1.onclick = ()=>action1.get()();
+button2.onclick = ()=>updateAnimals(0.2);
+
+function updateAnimals(p=0.5) {
+  animals.update(currentAnimals => {
+    let res: Animal[] = [];
+    currentAnimals.forEach(animal => {
+      if (animal.alive) {
+        res.push(...animal.update(p));
+      }
+    })
+    return res;
+  })
+}
+
+createHtmlElement("p", true)
+const sellbutton = createHtmlElement("button", true);
+sellbutton.className = "bigbutton";
+sellbutton.textContent = "Sell";
+sellbutton.style.backgroundColor = "grey";
+
+animals.subscribe(currentAnimals => {
+  if (currentAnimals.length > 0) {
+    sellbutton.style.display = "inline-block";
+    button2.style.display = "inline-block";
+    button1.textContent = "Futtr 🍖";
+    const value = currentAnimals.reduce((sum, animal) => sum + animal.worth(),0);
+    sellbutton.textContent = `Sell for ${value}$`;
+    sellbutton.onclick = () => {
+      balance.update(b => b + value);
+      currentAnimals.forEach(animal => animal.remove());
+      if (value > highscore.get()) {
+        highscore.set(value);
+      }
+      animals.set([]);
+    };
   }
-  deposit += score - 1;
-  scoredisplay.textContent = "bank: " + deposit;
-  for (let a of animals) {
-    a.remove();
+  else {
+    sellbutton.style.display = "none";
+    button2.style.display = "none";
+    button1.textContent = "Start Game";
+    action1.set(startGame);
   }
-  animals = [];
-  step();
 })
-
-step()
-feedbutton.addEventListener("click", ()=>{step(0.5)})
-feedbutton2.addEventListener("click",()=> step(0.1))
-
-
