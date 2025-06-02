@@ -17,7 +17,7 @@ let highscoreelement = createElement("span", "highscore: 0")
 body.appendChild(highscoreelement)
 let deposit = 100;
 
-const scoredisplay = createElement("div", "deposit: " + deposit)
+const scoredisplay = createElement("div", "bank: " + deposit)
 body.appendChild(scoredisplay)
 
 
@@ -118,7 +118,7 @@ function step(p = 0.2){
     feedbutton.textContent= "neustart"
     feedbutton2.style.display = "none"
     deposit -= 1;
-    scoredisplay.textContent = "score: " + deposit;
+    scoredisplay.textContent = "bank: " + deposit;
   }
     
 }
@@ -135,7 +135,7 @@ stopbutton.addEventListener("click", () => {
 
   }
   deposit += score - 1;
-  scoredisplay.textContent = "deposit: " + deposit;
+  scoredisplay.textContent = "bank: " + deposit;
   for (let a of animals) {
     a.remove();
   }
