@@ -1,4 +1,6 @@
 export {}
+
+
 const skins = ["🐭","🐹","🐱","🐶","🐻","🐯","🦁","🐼","🐸","🐲",]
 
 class Writable<T> {
@@ -93,15 +95,13 @@ class Animal{
     const random = Math.random();
     const p = 0.3;
 
-    if (random < p){
+    this.element.classList.toggle("wiggle")
+    this.element.classList.toggle("wiggle2")
+
+    if (random < p ){
       this.remove();
       return [];
-    }
-
-    this.element.classList.remove("wiggle")
-    setTimeout(() => {
-      this.element.classList.add("wiggle");
-    }, 1);
+    }  
 
     if (random < p*2){
       if (grow && this.type + 1 < skins.length) {
@@ -111,9 +111,8 @@ class Animal{
       }else{
         const newone = new Animal(this.type);
         
-  
-        this.element.insertAdjacentElement("afterend", newone.element);
         newone.element.classList.add("wiggle");
+        this.element.insertAdjacentElement("afterend", newone.element);
         return [this,newone];
       }
     }
@@ -155,7 +154,7 @@ function updateAnimals(grow = false) {
     currentAnimals.forEach(animal => {
       if (animal.alive) res.push(...animal.update(grow));
     })
-    return res;
+    return res.filter(animal => animal.alive);
   })
 }
 

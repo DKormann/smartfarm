@@ -82,6 +82,9 @@ h1{
 .animal.active.wiggle{
   animation: pop 300ms ease;
 }
+.animal.active.wiggle2{
+  animation: pop 300ms ease;
+}
 @keyframes pop {
   0%   { transform: scale(1); }
   50%  { transform: scale(1.1); }
