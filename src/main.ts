@@ -125,7 +125,6 @@ class Animal{
 const button1 = createHtmlElement("button", true);
 button1.className = "bigbutton";
 button1.textContent = "Futtr 🍖";
-button1.textContent = "Start Game (1$)";
 
 const button2 = createHtmlElement("button", true);
 button2.className = "bigbutton";
@@ -150,8 +149,6 @@ document.addEventListener("click", (e) => {
 })
 
 
-
-
 button1.onclick = ()=>updateAnimals(true);
 button2.onclick = ()=>updateAnimals(false);
 
@@ -159,9 +156,7 @@ function updateAnimals(grow = false) {
   animals.update(currentAnimals => {
     let res: Animal[] = [];
     currentAnimals.forEach(animal => {
-      if (animal.alive) {
-        res.push(...animal.update(grow));
-      }
+      if (animal.alive) res.push(...animal.update(grow));
     })
     return res;
   })
