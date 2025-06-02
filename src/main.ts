@@ -124,6 +124,7 @@ class Animal{
 
 const button1 = createHtmlElement("button", true);
 button1.className = "bigbutton";
+button1.textContent = "Futtr 🍖";
 button1.textContent = "Start Game (1$)";
 
 const button2 = createHtmlElement("button", true);
@@ -134,19 +135,24 @@ button2.style.display = "none";
 
 
 function startGame(){
-
+  if (animals.get().length > 0) return
   balance.set(balance.get() - 1);
   const fst = new Animal(0);
   animalsElement.appendChild(fst.element);
   animals.set([fst]);
-  button1.textContent = "Futtr 🍖";
   button2.style.display = "inline-block";
-  action1.set(()=>updateAnimals(true));
 
 }
 
-const action1 = new Writable(startGame);
-button1.onclick = ()=>action1.get()();
+document.addEventListener("click", (e) => {
+  if (e.target == sellbutton || e.target == button2) return;
+  startGame();
+})
+
+
+
+
+button1.onclick = ()=>updateAnimals(true);
 button2.onclick = ()=>updateAnimals(false);
 
 function updateAnimals(grow = false) {
@@ -167,26 +173,32 @@ sellbutton.className = "bigbutton";
 sellbutton.textContent = "Sell";
 sellbutton.style.backgroundColor = "grey";
 
+const starttag = createHtmlElement("p", true);
+starttag.textContent = "Click to start the game";
+
+sellbutton.onclick = () => {
+  const value = animals.get().reduce((sum, animal) => sum + animal.worth(),0);
+  balance.update(b => b + value);
+  animals.get().forEach(animal => animal.remove());
+  if (value > highscore.get()) {
+    highscore.set(value);
+  }
+  animals.set([]);
+};
+
+
 animals.subscribe(currentAnimals => {
   if (currentAnimals.length > 0) {
+    starttag.style.display = "none";
     sellbutton.style.display = "inline-block";
+    button1.style.display = "inline-block";
     button2.style.display = "inline-block";
-    button1.textContent = "Futtr 🍖";
     const value = currentAnimals.reduce((sum, animal) => sum + animal.worth(),0);
     sellbutton.textContent = `Sell for ${value}$`;
-    sellbutton.onclick = () => {
-      balance.update(b => b + value);
-      currentAnimals.forEach(animal => animal.remove());
-      if (value > highscore.get()) {
-        highscore.set(value);
-      }
-      animals.set([]);
-    };
-  }
-  else {
+  } else {
     sellbutton.style.display = "none";
+    button1.style.display = "none";
     button2.style.display = "none";
-    button1.textContent = "Start Game";
-    action1.set(startGame);
+    starttag.style.display = "block";
   }
 })
