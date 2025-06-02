@@ -60,7 +60,7 @@ animalsElement.id= "animals";
 const highscore = new Writable(0);
 const highscoreElement = createHtmlElement("p", true);
 highscore.subscribe(value => {
-  
+  navigator?.vibrate?.([100, 50, 100]);
   highscoreElement.textContent = `highscore: ${animals.get().reduce((sum, animal) => sum + animal.face(), "")}`;
 });
 
@@ -105,6 +105,7 @@ class Animal{
 
     if (random < p*2){
       if (Math.random() < 0.5 && this.type + 1 < skins.length) {
+        navigator?.vibrate?.(20);
         this.type += 1;
         this.element.textContent = this.face();
       }else{
@@ -131,6 +132,7 @@ button2.style.display = "none";
 
 
 function startGame(){
+
   balance.set(balance.get() - 1);
   const fst = new Animal(0);
   animalsElement.appendChild(fst.element);
@@ -146,6 +148,7 @@ button1.onclick = ()=>action1.get()();
 button2.onclick = ()=>updateAnimals(0.2);
 
 function updateAnimals(p=0.5) {
+  navigator?.vibrate?.(100);
   animals.update(currentAnimals => {
     let res: Animal[] = [];
     currentAnimals.forEach(animal => {
