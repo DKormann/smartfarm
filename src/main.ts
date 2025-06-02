@@ -95,8 +95,10 @@ class Animal{
     return Math.pow(2, this.type);
   }
 
-  update(p:number): Animal[] {
+  update(grow :Boolean): Animal[] {
     const random = Math.random();
+
+    const p = 0.3;
 
     if (random < p){
       this.remove();
@@ -104,7 +106,7 @@ class Animal{
     }
 
     if (random < p*2){
-      if (Math.random() < 0.5 && this.type + 1 < skins.length) {
+      if (grow && this.type + 1 < skins.length) {
         navigator?.vibrate?.(20);
         this.type += 1;
         this.element.textContent = this.face();
@@ -139,21 +141,20 @@ function startGame(){
   animals.set([fst]);
   button1.textContent = "Futtr 🍖";
   button2.style.display = "inline-block";
-  action1.set(updateAnimals);
+  action1.set(()=>updateAnimals(true));
 
 }
 
 const action1 = new Writable(startGame);
 button1.onclick = ()=>action1.get()();
-button2.onclick = ()=>updateAnimals(0.2);
+button2.onclick = ()=>updateAnimals(false);
 
-function updateAnimals(p=0.5) {
-  navigator?.vibrate?.(100);
+function updateAnimals(grow = false) {
   animals.update(currentAnimals => {
     let res: Animal[] = [];
     currentAnimals.forEach(animal => {
       if (animal.alive) {
-        res.push(...animal.update(p));
+        res.push(...animal.update(grow));
       }
     })
     return res;
