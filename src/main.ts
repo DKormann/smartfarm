@@ -144,7 +144,7 @@ function startGame(){
 }
 
 document.addEventListener("click", (e) => {
-  if (e.target == sellbutton || e.target == button2) return;
+  // if (e.target == sellbutton || e.target == button2) return;
   startGame();
 })
 
