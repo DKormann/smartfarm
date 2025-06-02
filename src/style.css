@@ -79,3 +79,11 @@ h1{
   font-size: 0;
 }
 
+.animal.active.wiggle{
+  animation: pop 150ms ease;
+}
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}

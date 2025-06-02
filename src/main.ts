@@ -89,14 +89,19 @@ class Animal{
   }
 
   update(grow :Boolean): Animal[] {
-    const random = Math.random();
 
+    const random = Math.random();
     const p = 0.3;
 
     if (random < p){
       this.remove();
       return [];
     }
+
+    this.element.classList.remove("wiggle")
+    setTimeout(() => {
+      this.element.classList.add("wiggle");
+    }, 1);
 
     if (random < p*2){
       if (grow && this.type + 1 < skins.length) {
@@ -105,10 +110,14 @@ class Animal{
         this.element.textContent = this.face();
       }else{
         const newone = new Animal(this.type);
+        
+  
         this.element.insertAdjacentElement("afterend", newone.element);
+        newone.element.classList.add("wiggle");
         return [this,newone];
       }
     }
+
     return [this];
   }
 }
