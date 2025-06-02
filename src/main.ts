@@ -1,7 +1,5 @@
-
 export {}
 const skins = ["🐭","🐹","🐱","🐶","🐻","🐯","🦁","🐼","🐸","🐲",]
-
 
 class Writable<T> {
   private value: T;
@@ -32,7 +30,6 @@ class Writable<T> {
 }
 const body = document.body;
 
-
 function createHtmlElement<T extends keyof HTMLElementTagNameMap>(tag: T, append = false): HTMLElementTagNameMap[T] {
   const element = document.createElement(tag);
   if (append) body.appendChild(element);
@@ -42,7 +39,6 @@ function createHtmlElement<T extends keyof HTMLElementTagNameMap>(tag: T, append
 const h = createHtmlElement("h1", true);
 h.textContent = "Smart Farm";
 
-
 const balance = new Writable(100);
 
 const balanceElement = createHtmlElement("p", true);
@@ -50,12 +46,9 @@ balance.subscribe(value => {
   balanceElement.textContent = `bank: ${value}$`;
 });
 
-
 const animals = new Writable<Animal[]>([]);
-
 const animalsElement = createHtmlElement("div", true);
 animalsElement.id= "animals";
-
 
 const highscore = new Writable(0);
 const highscoreElement = createHtmlElement("p", true);
@@ -117,21 +110,19 @@ class Animal{
       }
     }
     return [this];
-
   }
 }
 
-
 const button1 = createHtmlElement("button", true);
-button1.className = "bigbutton";
-button1.textContent = "Futtr 🍖";
-
 const button2 = createHtmlElement("button", true);
+button1.className = "bigbutton";
 button2.className = "bigbutton";
-button2.id = "button2";
-button2.textContent = "Feed 🥦";
-button2.style.display = "none";
 
+button1.id = "button1";
+button2.id = "button2";
+
+button1.textContent = "Beef 🍖";
+button2.textContent = "Broc 🥦";
 
 function startGame(){
   if (animals.get().length > 0) return
@@ -175,12 +166,9 @@ sellbutton.onclick = () => {
   const value = animals.get().reduce((sum, animal) => sum + animal.worth(),0);
   balance.update(b => b + value);
   animals.get().forEach(animal => animal.remove());
-  if (value > highscore.get()) {
-    highscore.set(value);
-  }
+  if (value > highscore.get()) highscore.set(value);
   animals.set([]);
 };
-
 
 animals.subscribe(currentAnimals => {
   if (currentAnimals.length > 0) {
