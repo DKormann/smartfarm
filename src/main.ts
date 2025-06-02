@@ -124,7 +124,7 @@ class Animal{
 
 const button1 = createHtmlElement("button", true);
 button1.className = "bigbutton";
-button1.textContent = "Start Game";
+button1.textContent = "Start Game (1$)";
 
 const button2 = createHtmlElement("button", true);
 button2.className = "bigbutton";
