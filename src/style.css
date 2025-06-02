@@ -51,22 +51,22 @@ h1{
   min-width: none;
   justify-content: center;
   width: 70vw;
+  min-height: 1em;
 }
 
 
 .animal{
-  transition: 0.5s;
+  transition: 0.2s;
   font-size: 0em;
 }
 
 .animal.active{
-  transition: 0.5s;
+  transition: 0.2s;
   font-size: 1.2em;
-  color: #ff0;
 }
 
 .dead{
-  transition: 1s;
+  /* transition: 1s; */
 
   font-size: 0;
   /* display: none; */

@@ -1,14 +1,11 @@
 
 export {}
 
-
-
 const body = document.body
 
 body.innerHTML = "<h1>smartfarm</h1>"
 
 let highscore = 0;
-
 
 function createElement(tag: string, text: string): HTMLElement {
   const element = document.createElement(tag);
@@ -18,6 +15,10 @@ function createElement(tag: string, text: string): HTMLElement {
 
 let highscoreelement = createElement("span", "highscore: 0")
 body.appendChild(highscoreelement)
+let deposit = 100;
+
+const scoredisplay = createElement("div", "deposit: " + deposit)
+body.appendChild(scoredisplay)
 
 
 body.appendChild(createElement("p", "Feed your animals:"))
@@ -46,31 +47,20 @@ stopbutton.style.background = "grey"
 body.appendChild(stopbutton)
 
 
-// animals go from mouse to hamster to bigger and bigger animals
-// represented by emojis. the biggest animal is the green snake dragon
-const animaltypes = [
-  "🐭",
-  "🐹",
-  "🐱",
-  "🐶",
-  "🐻",
-  "🐯",
-  "🦁",
-  "🐼",
-  "🐸",
-  "🐲",
-]
+
+
+const animaltypes = ["🐭","🐹","🐱","🐶","🐻","🐯","🦁","🐼","🐸","🐲",]
 
 class animal{
 
   type : number
   element: HTMLElement
+  alive: boolean = true
 
   constructor(t = 0){
     this.type = t
     this.element = createElement("div", animaltypes[t])
     this.element.className = "animal"
-    animalelement.appendChild(this.element)
     setTimeout(() => {
       this.element.className = "animal active"
     }, 1);
@@ -79,7 +69,8 @@ class animal{
   remove(){
     this.element.className = "dead"
     setTimeout(()=>this.element.remove(), 1000)
-    return []
+    this.alive = false
+
   }
 
   worth() {
@@ -87,20 +78,22 @@ class animal{
   }
 
 
-  evolve(p:number): animal[] {
+  evolve(p:number): void {
     let rand = Math.random()
+    console.log(rand)
     
     if (rand < p) return this.remove()
 
-    if (rand > 1 - p) {
-      if (Math.random() > 0.5) if (this.type + 1 < animaltypes.length){
-        this.remove()
-        return [new animal(this.type + 1)]
+    if (rand > 1 - p){ 
+      if ((Math.random() > 0.5) && (this.type + 1 < animaltypes.length)) {
+        this.type = Math.min(animals.length-1, this.type + 1)
+        this.element.textContent = animaltypes[this.type]
+        return
       }
-      return [this, new animal(this.type)]
+      let n = new animal(this.type)
+      this.element.insertAdjacentElement("afterend", n.element)
+      animals.push(n)
     }
-
-    return [this]
   }
   
 }
@@ -116,19 +109,14 @@ function step(p = 0.2){
     return
   }
   
-  animals = animals.flatMap(a => a.evolve(p))
-  console.log(animals);
-  
+  animals.forEach(a =>a.evolve(p))
+  animals = animals.filter(a => a.alive)
 
   if (animals.length==0){
     feedbutton.textContent= "neustart"
     feedbutton2.style.display = "none"
-  }
-
-  let score = animals.reduce((acc, a) => acc + a.worth(), 0);
-  stopbutton.style.display = "none"
-  if (score>highscore){
-    stopbutton.style.display = "inline"
+    deposit -= 1;
+    scoredisplay.textContent = "score: " + deposit;
   }
     
 }
@@ -136,10 +124,15 @@ function step(p = 0.2){
 
 stopbutton.addEventListener("click", () => {
   let score = animals.reduce((acc, a) => acc + a.worth(), 0);
-  highscore = Math.max(highscore, score);
-  highscoreelement.textContent = "highscore: " + animals.reduce((acc, a) => acc + animaltypes[a.type], "");
-  alert("new highscore: " + highscore);
-  stopbutton.style.display = "none";
+  if (score > highscore){
+
+    highscore = Math.max(highscore, score);
+    highscoreelement.textContent = "highscore: " + animals.reduce((acc, a) => acc + animaltypes[a.type], "");
+    alert("new highscore: " + highscore);
+
+  }
+  deposit += score - 1;
+  scoredisplay.textContent = "deposit: " + deposit;
   for (let a of animals) {
     a.remove();
   }
@@ -148,12 +141,7 @@ stopbutton.addEventListener("click", () => {
 })
 
 step()
-
-feedbutton.addEventListener("click", ()=>{
-  step(0.2)
-})
-
+feedbutton.addEventListener("click", ()=>{step(0.5)})
 feedbutton2.addEventListener("click",()=> step(0.1))
-// show()
 
 
