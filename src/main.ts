@@ -98,7 +98,7 @@ class Animal{
     this.element.classList.toggle("wiggle")
     this.element.classList.toggle("wiggle2")
 
-    if (random < p - 0.01){
+    if (random < p - 0.05){
       this.remove();
       return [];
     }  
